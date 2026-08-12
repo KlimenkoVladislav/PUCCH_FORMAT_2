@@ -6,7 +6,7 @@
 
 using json = nlohmann::json;
 
-std::optional<std::complex<double>> string_to_complex(const std::string &str){
+std::optional<std::complex<double>> validate_string_to_complex(const std::string &str){
     if (str.empty()){
         std::cerr << "Ошибка: строка пуста\n";
         return std::nullopt;
@@ -103,7 +103,7 @@ bool validate_value(const json &data){
                     std::cerr << "Ошибка: значения в поле " << key << " должны быть типа string\n";
                     return false;
                 }
-                if (!string_to_complex(val).has_value()){
+                if (!validate_string_to_complex(val).has_value()){
                     return false;
                 }
             }
@@ -156,7 +156,7 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        // f(data["num_of_pucch_f2_bits"], data["pucch_f2_bits"]);
+        coding_mode(data["num_of_pucch_f2_bits"], data["pucch_f2_bits"]);
     }
     else if (data["mode"] == "decoding"){
         if (!data.contains("num_of_pucch_f2_bits") or !data.contains("qpsk_symbols")){
@@ -167,7 +167,7 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        // f(data["num_of_pucch_f2_bits"], data["qpsk_symbols"]);
+        decoding_mode(data["num_of_pucch_f2_bits"], data["qpsk_symbols"]);
     }
     else if (data["mode"] == "channel simulation"){
         if (!data.contains("num_of_pucch_f2_bits") or !data.contains("iterations")){
@@ -178,7 +178,7 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        // f(data["num_of_pucch_f2_bits"], data["iterations"]);
+        channel_simulation_mode(data["num_of_pucch_f2_bits"], data["iterations"]);
     }
     else {
         std::cerr << "Ошибка: данного значения поля 'mode' существовать не может\n";
