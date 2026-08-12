@@ -18,13 +18,26 @@ void channel_simulation_mode(int n, int iterations);
 class BlockEncoder{
 private:
     int _n;
-    int _num_of_col = 13;
-    int _m = 20;
+    const int _num_of_col = 13;
+    const int _m = 20;
     std::vector<int> _bits;
     std::vector<int> _encod_data;
 
     void encoder();
 public:
     BlockEncoder(int n, const std::vector<int> bits);
-    const std::vector<int> &getEncodData();
+    std::vector<int> getEncodData();
+};
+
+class QPSKModulator{
+private:
+    const int _m = 20;
+    const int _num_qpsk_sym = 10;
+    const std::vector<int> _bits;
+    std::vector<std::complex<double>> _qpsk_symbols;
+
+    void modulate();
+public:
+    QPSKModulator(std::vector<int> bits);
+    std::vector<std::complex<double>> get_qpsk_symbols();
 };
