@@ -26,8 +26,8 @@ const int BASIS_MATRIX[20][13] = {
 class BlockEncoder{
 private:
     int _n;
-    int _num_of_col = 13;
-    int _m = 20;
+    const int _num_of_col = 13;
+    const int _m = 20;
     const std::vector<int> _bits;
     std::vector<int> _encod_data;
 
@@ -50,7 +50,7 @@ public:
                     encoder();
                 }
 
-    const std::vector<int> &getEncodData() const {
-        return _encod_data;
+    std::vector<int> getEncodData(){
+        return std::move(_encod_data);
     }
 };

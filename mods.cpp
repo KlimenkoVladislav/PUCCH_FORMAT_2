@@ -16,14 +16,14 @@ std::vector<int> generate_random_bits(int n){
 }
 
 std::complex<double> string_to_complex(const std::string &str){
-    double real, imag;
+    double Re, Im;
     char sign, j;
 
     std::stringstream ss(str);
-    ss >> real >> sign >> imag >> j;    
-    if (sign == '-'){ imag = -imag; }
+    ss >> Re >> sign >> Im >> j;    
+    if (sign == '-'){ Im = -Im; }
     
-    return std::complex<double>(real, imag);
+    return std::complex<double>(Re, Im);
 }
 
 void coding_mode(int n, const std::vector<int> bits){
@@ -42,6 +42,9 @@ void channel_simulation_mode(int n, int iterations){
     for (int i = 0; i < iterations; i++){
         std::vector<int> bits = generate_random_bits(n);
         BlockEncoder encoder(n, std::move(bits));
-        const std::vector<int> &encod_data = encoder.getEncodData();
+        std::vector<int> encod_data = encoder.getEncodData();
+
+        QPSKModulator modulator(std::move(encod_data));
+        std::vector<std::complex<double>> qpsk_symbols = modulator.get_qpsk_symbols();
     }
 }
