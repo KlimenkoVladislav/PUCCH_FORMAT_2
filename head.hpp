@@ -1,8 +1,14 @@
+#include "json.hpp"
+
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
+#include <random>
+#include <optional>
 #include <complex>
+
+using json = nlohmann::json;
 
 std::optional<std::complex<double>> validate_string_to_complex(const std::string& str);
 bool validate_extra_fields(const json &data, const std::vector<std::string> &allowed_fields);
@@ -39,5 +45,17 @@ private:
     void modulate();
 public:
     QPSKModulator(std::vector<int> bits);
-    std::vector<std::complex<double>> get_qpsk_symbols();
+    std::vector<std::complex<double>> getQpskSymbols();
+};
+
+class AWGH{
+private:
+    const int _num_qpsk_sym = 10;
+    std::vector<std::complex<double>> _qpsk_symbols;
+
+    double N(double expectation, double variance);
+    void gaussian_noise();
+public:
+    AWGH(std::vector<std::complex<double>> qpsk_symbols);
+    std::vector<std::complex<double>> getQpskSymbols();
 };
