@@ -1,7 +1,5 @@
 #include "head.hpp"
 
-#include <random>
-
 std::vector<int> generate_random_bits(int n){
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -41,10 +39,13 @@ void decoding_mode(int n, const std::vector<std::string> input_arr){
 void channel_simulation_mode(int n, int iterations){
     for (int i = 0; i < iterations; i++){
         std::vector<int> bits = generate_random_bits(n);
-        BlockEncoder encoder(n, std::move(bits));
+        BlockEncoder encoder(n, bits);  // тут вот не move т.к. надо для BLER
         std::vector<int> encod_data = encoder.getEncodData();
 
         QPSKModulator modulator(std::move(encod_data));
-        std::vector<std::complex<double>> qpsk_symbols = modulator.get_qpsk_symbols();
+        std::vector<std::complex<double>> qpsk_symbols = modulator.getQpskSymbols();
+
+        AWGH noise(std::move(qpsk_symbols));
+        std::vector<std::complex<double>> qpsk_w_noise = noise.getQpskSymbols();
     }
 }

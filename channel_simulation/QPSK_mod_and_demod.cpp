@@ -23,7 +23,7 @@ public:
                     modulate();
                 }
 
-    std::vector<std::complex<double>> get_qpsk_symbols(){
+    std::vector<std::complex<double>> getQpskSymbols(){
         return std::move(_qpsk_symbols);
     }
 };

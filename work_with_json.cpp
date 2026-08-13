@@ -1,10 +1,6 @@
 #include "head.hpp"
-#include "json.hpp"
 
 #include <fstream>
-#include <optional>
-
-using json = nlohmann::json;
 
 std::optional<std::complex<double>> validate_string_to_complex(const std::string &str){
     if (str.empty()){
