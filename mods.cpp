@@ -25,14 +25,24 @@ std::complex<double> string_to_complex(const std::string &str){
 }
 
 void coding_mode(int n, const std::vector<int> bits){
+    BlockEncoder encoder(n, std::move(bits));
+    std::vector<int> encod_data = encoder.getEncodData();
 
+    QPSKModulator modulator(std::move(encod_data));
+    std::vector<std::complex<double>> qpsk_symbols = modulator.getQpskSymbols();
+
+    // json(qpsk_symbols)
 }
 
 void decoding_mode(int n, const std::vector<std::string> input_arr){
-    std::vector<std::complex<double>> qpsk_symbols(10);
+    std::vector<std::complex<double>> qpsk_w_noise(10);
     for (int i = 0; i < 10; i++){
-        qpsk_symbols[i] = string_to_complex(input_arr[i]);
+        qpsk_w_noise[i] = string_to_complex(input_arr[i]);
     }
+
+    QPSKDemodulator demodulator(std::move(qpsk_w_noise));
+    std::vector<double> LLRs = demodulator.getLLRs();
+
 
 }
 
@@ -47,5 +57,10 @@ void channel_simulation_mode(int n, int iterations){
 
         AWGH noise(std::move(qpsk_symbols));
         std::vector<std::complex<double>> qpsk_w_noise = noise.getQpskSymbols();
+
+        QPSKDemodulator demodulator(std::move(qpsk_w_noise));
+        std::vector<double> LLRs = demodulator.getLLRs();
+
+        
     }
 }
