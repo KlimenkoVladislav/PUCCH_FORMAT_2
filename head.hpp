@@ -37,7 +37,7 @@ public:
     std::vector<std::complex<double>> getQpskSymbols();
 };
 
-class AWGH{
+class AWGN{
 private:
     const int _num_qpsk_sym = 10;
     std::vector<std::complex<double>> _qpsk_symbols;
@@ -45,7 +45,7 @@ private:
     double N(double expectation, double variance);
     void gaussian_noise();
 public:
-    AWGH(std::vector<std::complex<double>> qpsk_symbols);
+    AWGN(std::vector<std::complex<double>> qpsk_symbols);
     std::vector<std::complex<double>> getQpskSymbols();
 };
 

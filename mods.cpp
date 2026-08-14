@@ -55,7 +55,7 @@ void channel_simulation_mode(int n, int iterations){
         QPSKModulator modulator(std::move(encod_data));
         std::vector<std::complex<double>> qpsk_symbols = modulator.getQpskSymbols();
 
-        AWGH noise(std::move(qpsk_symbols));
+        AWGN noise(std::move(qpsk_symbols));
         std::vector<std::complex<double>> qpsk_w_noise = noise.getQpskSymbols();
 
         QPSKDemodulator demodulator(std::move(qpsk_w_noise));

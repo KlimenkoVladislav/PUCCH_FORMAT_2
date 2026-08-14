@@ -1,6 +1,6 @@
 #include "../head.hpp"
 
-class AWGH{
+class AWGN{
 private:
     const int _num_qpsk_sym = 10;
     std::vector<std::complex<double>> _qpsk_symbols;
@@ -19,7 +19,7 @@ private:
     }
 
 public:
-    AWGH(std::vector<std::complex<double>> qpsk_symbols)
+    AWGN(std::vector<std::complex<double>> qpsk_symbols)
                 : _qpsk_symbols(std::move(qpsk_symbols)) {}
 
     std::vector<std::complex<double>> getQpskSymbols(){
