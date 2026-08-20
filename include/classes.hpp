@@ -1,14 +1,4 @@
-#include "json.hpp"
-
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <random>
-#include <optional>
-#include <complex>
-
-using json = nlohmann::json;
+#include "head.hpp"
 
 class BlockEncoder{
 private:
@@ -24,6 +14,7 @@ public:
     std::vector<int> getEncodData();
 };
 
+
 class QPSKModulator{
 private:
     const int _m = 20;
@@ -37,6 +28,7 @@ public:
     std::vector<std::complex<double>> getQpskSymbols();
 };
 
+
 class AWGN{
 private:
     const int _num_qpsk_sym = 10;
@@ -48,6 +40,7 @@ public:
     AWGN(std::vector<std::complex<double>> qpsk_symbols);
     std::vector<std::complex<double>> getQpskSymbols();
 };
+
 
 class QPSKDemodulator{
 private:
@@ -63,15 +56,16 @@ public:
 };
 
 
-// work_with_json.cpp
-std::optional<std::complex<double>> validate_string_to_complex(const std::string& str);
-bool validate_extra_fields(const json &data, const std::vector<std::string> &allowed_fields);
-bool validate_value(const json &data);
-int distribution(std::string filename);
+class BlockDecoder{
+private:
+    int _n;
+    const int _num_of_col = 13;
+    const int _m = 20;
+    std::vector<double> _LLRs;
+    std::vector<int> _bits;
 
-// mods.cpp
-std::vector<int> generate_random_bits(int n);
-std::complex<double> string_to_complex(const std::string &str);
-void coding_mode(int n, const std::vector<int> bits);
-void decoding_mode(int n, const std::vector<std::string> str);
-void channel_simulation_mode(int n, int iterations);
+    void decoder();
+public:
+    BlockDecoder(int n, std::vector<double> LLRs);
+    std::vector<int> getBits();
+};

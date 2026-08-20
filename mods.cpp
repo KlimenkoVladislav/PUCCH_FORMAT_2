@@ -1,4 +1,5 @@
-#include "head.hpp"
+#include "include/head.hpp"
+#include "include/classes.hpp"
 
 std::vector<int> generate_random_bits(int n){
     std::random_device rd;
@@ -43,7 +44,10 @@ void decoding_mode(int n, const std::vector<std::string> input_arr){
     QPSKDemodulator demodulator(std::move(qpsk_w_noise));
     std::vector<double> LLRs = demodulator.getLLRs();
 
+    BlockDecoder decoder(n, std::move(LLRs));
+    std::vector<int> pucch_f2_bits = decoder.getBits();
 
+    // json(pucch_f2_bits)
 }
 
 void channel_simulation_mode(int n, int iterations){
@@ -61,6 +65,9 @@ void channel_simulation_mode(int n, int iterations){
         QPSKDemodulator demodulator(std::move(qpsk_w_noise));
         std::vector<double> LLRs = demodulator.getLLRs();
 
-        
+        BlockDecoder decoder(n, std::move(LLRs));
+        std::vector<int> pucch_f2_bits = decoder.getBits();
+
+        // BLER(bits, pucch_f2_bits) and json(...)
     }
 }
