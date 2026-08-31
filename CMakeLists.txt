@@ -10,6 +10,7 @@ set(SOURCES
     channel_simulation/AWGN_channel_model.cpp
     channel_simulation/QPSK_mod_and_demod.cpp
     channel_simulation/encoder_and_decoder.cpp
+    BLER/BLER.cpp
 )
 
 add_executable(pucchf2 ${SOURCES})

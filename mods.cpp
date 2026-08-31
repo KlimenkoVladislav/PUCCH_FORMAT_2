@@ -25,17 +25,17 @@ std::complex<double> string_to_complex(const std::string &str){
     return std::complex<double>(Re, Im);
 }
 
-void coding_mode(int n, const std::vector<int> bits){
+int coding_mode(int n, const std::vector<int> bits){
     BlockEncoder encoder(n, std::move(bits));
     std::vector<int> encod_data = encoder.getEncodData();
 
     QPSKModulator modulator(std::move(encod_data));
     std::vector<std::complex<double>> qpsk_symbols = modulator.getQpskSymbols();
 
-    // json(qpsk_symbols)
+    return coding_mode_output(qpsk_symbols);
 }
 
-void decoding_mode(int n, const std::vector<std::string> input_arr){
+int decoding_mode(int n, const std::vector<std::string> input_arr){
     std::vector<std::complex<double>> qpsk_w_noise(10);
     for (int i = 0; i < 10; i++){
         qpsk_w_noise[i] = string_to_complex(input_arr[i]);
@@ -47,10 +47,12 @@ void decoding_mode(int n, const std::vector<std::string> input_arr){
     BlockDecoder decoder(n, std::move(LLRs));
     std::vector<int> pucch_f2_bits = decoder.getBits();
 
-    // json(pucch_f2_bits)
+    return decoding_mode_output(n, pucch_f2_bits);
 }
 
-void channel_simulation_mode(int n, int iterations){
+int channel_simulation_mode(int n, int iterations){
+    std::pair<int, float> res;
+
     for (int i = 0; i < iterations; i++){
         std::vector<int> bits = generate_random_bits(n);
         BlockEncoder encoder(n, bits);  // тут вот не move т.к. надо для BLER
@@ -68,6 +70,8 @@ void channel_simulation_mode(int n, int iterations){
         BlockDecoder decoder(n, std::move(LLRs));
         std::vector<int> pucch_f2_bits = decoder.getBits();
 
-        // BLER(bits, pucch_f2_bits) and json(...)
+        res = BLER(std::move(bits), pucch_f2_bits, iterations);
     }
+
+    return channel_simulation_mode_output(n, res.second, iterations - res.first, res.first);
 }

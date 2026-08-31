@@ -152,7 +152,7 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        coding_mode(data["num_of_pucch_f2_bits"], data["pucch_f2_bits"]);
+        return coding_mode(data["num_of_pucch_f2_bits"], data["pucch_f2_bits"]);
     }
     else if (data["mode"] == "decoding"){
         if (!data.contains("num_of_pucch_f2_bits") or !data.contains("qpsk_symbols")){
@@ -163,7 +163,7 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        decoding_mode(data["num_of_pucch_f2_bits"], data["qpsk_symbols"]);
+        return decoding_mode(data["num_of_pucch_f2_bits"], data["qpsk_symbols"]);
     }
     else if (data["mode"] == "channel simulation"){
         if (!data.contains("num_of_pucch_f2_bits") or !data.contains("iterations")){
@@ -174,12 +174,73 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        channel_simulation_mode(data["num_of_pucch_f2_bits"], data["iterations"]);
+        return channel_simulation_mode(data["num_of_pucch_f2_bits"], data["iterations"]);
     }
     else {
         std::cerr << "Ошибка: данного значения поля 'mode' существовать не может\n";
         return -3;
     }
+}
+
+int coding_mode_output(std::vector<std::complex<double>> qpsk_symbols){
+    std::ofstream file("../result.json", std::ios::out);
+    if (!file.is_open()){
+        std::cerr << "Не удалось открыть файл result.json\n";
+        return -7;
+    }
+
+    json output_data;
+    output_data["mode"] = "coding";
+    
+    std::vector<std::string> symbols_str;
+    for (const auto& sym : qpsk_symbols){
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(3) 
+            << sym.real() << "+" << sym.imag() << "j";
+        symbols_str.push_back(oss.str());
+    }
+    output_data["qpsk_symbols"] = symbols_str;
+
+    file << output_data.dump(4);
+    file.close();
+
+    return 0;
+}
+
+int decoding_mode_output(int n, std::vector<int> pucch_f2_bits){
+    std::ofstream file("../result.json", std::ios::out);
+    if (!file.is_open()){
+        std::cerr << "Не удалось открыть файл result.json\n";
+        return -7;
+    }
+
+    json output_data;
+    output_data["mode"] = "decoding";
+    output_data["num_of_pucch_f2_bits"] = n;
+    output_data["pucch_f2_bits"] = pucch_f2_bits;
+
+    file << output_data.dump(4);
+    file.close();
+
+    return 0;
+}
+
+int channel_simulation_mode_output(int n, float bler, int success, int failed){
+    std::ofstream file("../result.json", std::ios::out);
+    if (!file.is_open()){
+        std::cerr << "Не удалось открыть файл result.json\n";
+        return -7;
+    }
+
+    json output_data;
+    output_data["mode"] = "channel simulation";
+    output_data["num_of_pucch_f2_bits"] = n;
+    output_data["bler"] = std::round(bler * 1000.0) / 1000.0;
+    output_data["success"] = success;
+    output_data["failed"] = failed;
+
+    file << output_data.dump(4);
+    file.close();
 
     return 0;
 }
