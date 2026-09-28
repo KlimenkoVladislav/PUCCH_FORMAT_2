@@ -1,7 +1,5 @@
 #include "include/head.hpp"
 
-#include <fstream>
-
 std::optional<std::complex<double>> validate_string_to_complex(const std::string &str){
     if (str.empty()){
         std::cerr << "Ошибка: строка пуста\n";
@@ -174,7 +172,10 @@ int distribution(std::string filename){
         if (!validate_extra_fields(data, allowed_fields)){ return -5; }
         if (!validate_value(data)){ return -6; }
 
-        return channel_simulation_mode(data["num_of_pucch_f2_bits"], data["iterations"]);
+        double snr_db;
+        std::cout << "Введите SNR в дБ: ";
+        std::cin >> snr_db;
+        return channel_simulation_mode(data["num_of_pucch_f2_bits"], data["iterations"], snr_db);
     }
     else {
         std::cerr << "Ошибка: данного значения поля 'mode' существовать не может\n";
@@ -195,8 +196,9 @@ int coding_mode_output(std::vector<std::complex<double>> qpsk_symbols){
     std::vector<std::string> symbols_str;
     for (const auto& sym : qpsk_symbols){
         std::ostringstream oss;
-        oss << std::fixed << std::setprecision(3) 
-            << sym.real() << "+" << sym.imag() << "j";
+        oss << std::fixed << std::setprecision(3) << sym.real();
+        if (sym.imag() >= 0){ oss << "+" << sym.imag() << "j"; }
+        else { oss << sym.imag() << "j"; }
         symbols_str.push_back(oss.str());
     }
     output_data["qpsk_symbols"] = symbols_str;

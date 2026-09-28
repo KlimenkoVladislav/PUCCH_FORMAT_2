@@ -9,6 +9,7 @@
 #include <random>
 #include <optional>
 #include <complex>
+#include <fstream>
 
 using json = nlohmann::json;
 
@@ -26,6 +27,6 @@ std::vector<int> generate_random_bits(int n);
 std::complex<double> string_to_complex(const std::string &str);
 int coding_mode(int n, const std::vector<int> bits);
 int decoding_mode(int n, const std::vector<std::string> str);
-int channel_simulation_mode(int n, int iterations);
+int channel_simulation_mode(int n, int iterations, double snr_db);
 
-std::pair<int, float> BLER(std::vector<int> input_bits, std::vector<int> output_bits, int n);
+std::pair<int, double> BLER(std::vector<int> input_bits, std::vector<int> output_bits, int n);

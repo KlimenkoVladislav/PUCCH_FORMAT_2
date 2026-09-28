@@ -50,8 +50,8 @@ int decoding_mode(int n, const std::vector<std::string> input_arr){
     return decoding_mode_output(n, pucch_f2_bits);
 }
 
-int channel_simulation_mode(int n, int iterations){
-    std::pair<int, float> res;
+int channel_simulation_mode(int n, int iterations, double snr_db){
+    std::pair<int, double> res;
 
     for (int i = 0; i < iterations; i++){
         std::vector<int> bits = generate_random_bits(n);
@@ -61,7 +61,7 @@ int channel_simulation_mode(int n, int iterations){
         QPSKModulator modulator(std::move(encod_data));
         std::vector<std::complex<double>> qpsk_symbols = modulator.getQpskSymbols();
 
-        AWGN noise(std::move(qpsk_symbols));
+        AWGN noise(std::move(qpsk_symbols), snr_db);
         std::vector<std::complex<double>> qpsk_w_noise = noise.getQpskSymbols();
 
         QPSKDemodulator demodulator(std::move(qpsk_w_noise));
@@ -72,6 +72,16 @@ int channel_simulation_mode(int n, int iterations){
 
         res = BLER(std::move(bits), pucch_f2_bits, iterations);
     }
+
+    std::ofstream file("../output.txt", std::ios::app);
+    if (!file.is_open()){
+        std::cerr << "Ошибка: не удалось открыть файл\n";
+        return -1;
+    }
+
+    file << snr_db << " " << n << " " << iterations << " " << res.second << std::endl;
+
+    file.close();
 
     return channel_simulation_mode_output(n, res.second, iterations - res.first, res.first);
 }

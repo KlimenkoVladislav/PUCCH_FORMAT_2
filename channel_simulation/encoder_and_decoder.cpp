@@ -25,11 +25,6 @@ const int BASIS_MATRIX[20][13] = {
 };
 
 void BlockEncoder::encoder(){
-    // for (int i = 0; i < _n; i++){
-    //     std::cout << _bits[i] << " ";
-    // }
-    // std::cout << "\n";
-
     _encod_data.resize(_m);
 
     int start_col = _num_of_col - _n;
@@ -76,11 +71,6 @@ void BlockDecoder::decoder(){
     for (int i = 0; i < _n; i++){
         _bits[i] = (best_data >> i) & 1;
     }
-
-    // for (int i = 0; i < _n; i++){
-    //     std::cout << _bits[i] << " ";
-    // }
-    // std::cout << "\n\n";
 }
 
 BlockEncoder::BlockEncoder(int n, std::vector<int> bits)

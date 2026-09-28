@@ -35,9 +35,9 @@ private:
     std::vector<std::complex<double>> _qpsk_symbols;
 
     double N(double expectation, double variance);
-    void gaussian_noise();
+    void gaussian_noise(double snr_lin);
 public:
-    AWGN(std::vector<std::complex<double>> qpsk_symbols);
+    AWGN(std::vector<std::complex<double>> qpsk_symbols, double snr_db);
     std::vector<std::complex<double>> getQpskSymbols();
 };
 
