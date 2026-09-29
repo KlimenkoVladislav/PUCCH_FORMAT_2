@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 
-INPUT_FILE = "../output.txt"
+INPUT_FILE = "output.txt"
 
 COLORS = {
     2:  "red",
@@ -79,23 +79,32 @@ def plot_bler(data):
             print(f"Предупреждение: нет данных для n={n}", file=sys.stderr)
             continue
         
-        plt.plot(
-            snr, bler,
+        # Убираем нулевые значения BLER (логарифм от 0 не определен)
+        mask = bler > 0
+        snr_plot = snr[mask]
+        bler_plot = bler[mask]
+        
+        if len(snr_plot) == 0:
+            print(f"Предупреждение: все BLER=0 для n={n}", file=sys.stderr)
+            continue
+        
+        plt.semilogy(
+            snr_plot, bler_plot,
             color=COLORS.get(n, "black"),
             marker=MARKERS.get(n, "o"),
             markersize=4,
-            markevery=max(1, len(snr) // 20),
+            markevery=max(1, len(snr_plot) // 20),
             linewidth=1.5,
             label=f"n = {n}"
         )
     
     plt.xlabel("SNR (дБ)", fontsize=12)
-    plt.ylabel("BLER", fontsize=12)
+    plt.ylabel("BLER (лог. шкала)", fontsize=12)
     plt.title("BLER vs SNR для PUCCH Format 2", fontsize=14)
-    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.grid(True, which="both", linestyle="--", alpha=0.6)
     plt.legend(fontsize=11)
     plt.xlim(-10, 30)
-    plt.ylim(0.0, 1.0)
+    plt.ylim(1e-5, 1.0)
     
     plt.tight_layout()
     plt.show()
